@@ -72,8 +72,7 @@ ai_assistant/
 │
 ├── ui/
 │   ├── __init__.py
-│   ├── sidebar.py             # Sidebar components
-│   ├── sidebar_with_cloud.py  # Enhanced sidebar with cloud controls
+│   ├── sidebar.py             # Enhanced sidebar with cloud controls
 │   └── chat.py                # Chat interface with context
 │
 └── utils/

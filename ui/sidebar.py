@@ -14,16 +14,16 @@ def render_sidebar():
     st.sidebar.title("🛠️ Agent Tools")
     st.sidebar.markdown(TOOL_DESCRIPTIONS)
     st.sidebar.markdown("---")
-
-    # Cloud storage section (if enabled)
-    if FIRESTORE_CONFIG["enabled"]:
-        _render_cloud_storage()
-        st.sidebar.markdown("---")
     
     # Document upload section
     _render_document_upload()
     
     st.sidebar.markdown("---")
+
+    # Cloud storage section (if enabled)
+    if FIRESTORE_CONFIG["enabled"]:
+        _render_cloud_storage()
+        st.sidebar.markdown("---")
     
     # Clear chat button
     if st.sidebar.button("🗑️ Clear Chat History"):
