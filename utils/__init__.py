@@ -6,9 +6,20 @@ from .helpers import (
     format_file_size
 )
 
+from .firestore_manager import (
+        FirestoreManager,
+        init_firestore,
+        save_current_chat,
+        load_chat_from_cloud
+    )
+
 __all__ = [
-    'count_messages_by_role',
-    'get_file_extension',
-    'truncate_text',
-    'format_file_size'
-]
+        'count_messages_by_role',
+        'get_file_extension',
+        'truncate_text',
+        'format_file_size',
+        'FirestoreManager',
+        'init_firestore',
+        'save_current_chat',
+        'load_chat_from_cloud'
+    ]

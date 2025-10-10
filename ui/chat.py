@@ -41,6 +41,12 @@ def _process_user_input(prompt: str, agent_executor):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
+
+    if st.session_state.get("auto_save_enabled", False):
+        if "firestore_manager" in st.session_state:
+            firestore_manager = st.session_state.firestore_manager
+            session_id = st.session_state.get("session_id", "default")
+            firestore_manager.save_message(session_id, "user", prompt)
     
     # Generate AI response using agent
     with st.chat_message("assistant"):
@@ -68,6 +74,12 @@ def _process_user_input(prompt: str, agent_executor):
                 
                 # Add assistant response to chat
                 st.session_state.messages.append({"role": "assistant", "content": answer})
+
+                if st.session_state.get("auto_save_enabled", False):
+                    if "firestore_manager" in st.session_state:
+                        firestore_manager = st.session_state.firestore_manager
+                        session_id = st.session_state.get("session_id", "default")
+                        firestore_manager.save_message(session_id, "assistant", answer)
                 
             except Exception as e:
                 error_msg = f"I encountered an error: {str(e)}"

@@ -30,6 +30,14 @@ RAG_CONFIG = {
     "collection_name": "uploaded_docs"
 }
 
+# Firestore Configuration (optional - for cloud storage)
+FIRESTORE_CONFIG = {
+    "enabled": True,  # Set to True to enable cloud storage
+    "project_id": "ai-assistant-25549",  # Replace with your Firebase project ID
+    "collection_name": "chat_sessions",
+    "auto_save": True,  # Automatically save after each message
+}
+
 # Supported file types
 SUPPORTED_FILE_TYPES = ["pdf", "txt", "docx", "doc"]
 
