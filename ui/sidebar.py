@@ -22,6 +22,7 @@ def render_sidebar():
     # Clear chat button
     if st.sidebar.button("🗑️ Clear Chat History"):
         st.session_state.messages = []
+        st.session_state.rag_chat_history = []  
         st.rerun()
     
     st.sidebar.markdown("---")

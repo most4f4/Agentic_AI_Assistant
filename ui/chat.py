@@ -2,6 +2,8 @@
 Chat interface components
 """
 import streamlit as st
+from langchain_core.messages import HumanMessage, AIMessage
+
 
 
 def render_chat_interface(agent_executor):
@@ -44,8 +46,22 @@ def _process_user_input(prompt: str, agent_executor):
     with st.chat_message("assistant"):
         with st.spinner("🤔 Thinking and using tools..."):
             try:
-                # Invoke the agent
-                response = agent_executor.invoke({"input": prompt})
+                # Build chat history for agent (last 5 exchanges for context)
+                agent_chat_history = []
+                recent_messages = st.session_state.messages[-10:]  # Last 10 messages (5 exchanges)
+
+                for msg in recent_messages[:-1]:  # Exclude the current message
+                    if msg["role"] == "user":
+                        agent_chat_history.append(HumanMessage(content=msg["content"]))
+                    elif msg["role"] == "assistant":
+                        agent_chat_history.append(AIMessage(content=msg["content"]))
+
+
+                # Invoke the agent with input and chat history
+                response = agent_executor.invoke({
+                    "input": prompt,
+                    "chat_history": agent_chat_history
+                    })
                 answer = response["output"]
                 
                 st.markdown(answer)

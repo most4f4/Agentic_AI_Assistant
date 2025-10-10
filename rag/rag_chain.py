@@ -6,9 +6,9 @@ import tempfile
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
-from langchain.chains import create_retrieval_chain
+from langchain.chains import create_history_aware_retriever, create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
 from config.settings import RAG_CONFIG
 from .document_loader import load_document
@@ -24,7 +24,7 @@ def process_documents(uploaded_files):
     Returns:
         RAG chain object or None if processing fails
     """
-    all_documents = []
+    all_documents = [] 
     
     # Process each uploaded file
     for uploaded_file in uploaded_files:
@@ -71,7 +71,31 @@ def process_documents(uploaded_files):
     
     # Create QA chain
     llm = ChatOpenAI(model="gpt-4o")
+
+     # Contextualize question prompt
+    # This helps the LLM reformulate follow-up questions using chat history
+    # Example: "Tell me more about it" → "Tell me more about AI ethics"
+    contextualize_q_system_prompt = (
+        "Given a chat history and the latest user question "
+        "which might reference context in the chat history, "
+        "formulate a standalone question which can be understood "
+        "without the chat history. Do NOT answer the question, just "
+        "reformulate it if needed and otherwise return it as is."
+    )
     
+    contextualize_q_prompt = ChatPromptTemplate.from_messages([
+        ("system", contextualize_q_system_prompt),
+        MessagesPlaceholder("chat_history"),
+        ("human", "{input}"),
+    ])
+
+    # Create history-aware retriever
+    # This retriever reformulates questions based on chat history before searching
+    history_aware_retriever = create_history_aware_retriever(
+        llm, retriever, contextualize_q_prompt
+    )
+    
+    # Answer question prompt with chat history
     qa_system_prompt = (
         "You are an assistant for question-answering tasks. Use "
         "the following pieces of retrieved context to answer the "
@@ -83,10 +107,14 @@ def process_documents(uploaded_files):
     
     qa_prompt = ChatPromptTemplate.from_messages([
         ("system", qa_system_prompt),
+        MessagesPlaceholder("chat_history"),
         ("human", "{input}"),
     ])
     
+    # Create question-answer chain
     question_answer_chain = create_stuff_documents_chain(llm, qa_prompt)
-    rag_chain = create_retrieval_chain(retriever, question_answer_chain)
+    
+    # Create final conversational RAG chain
+    rag_chain = create_retrieval_chain(history_aware_retriever, question_answer_chain)
     
     return rag_chain

@@ -2,10 +2,9 @@
 Main Streamlit Application Entry Point
 AI Assistant with RAG & Reasoning Agent
 """
+import os
 import streamlit as st
 from dotenv import load_dotenv
-import os
-
 from config.settings import PAGE_CONFIG
 from agents.agent_setup import setup_agent
 from ui.sidebar import render_sidebar
@@ -29,6 +28,8 @@ def initialize_session_state():
         st.session_state.uploaded_files_names = []
     if "pending_question" not in st.session_state:
         st.session_state.pending_question = None
+    if "rag_chat_history" not in st.session_state:
+        st.session_state.rag_chat_history = []
 
 
 def main():
