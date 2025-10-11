@@ -65,3 +65,36 @@ def format_file_size(size_bytes: int) -> str:
             return f"{size_bytes:.1f} {unit}"
         size_bytes /= 1024.0
     return f"{size_bytes:.1f} TB"
+
+
+def generate_session_title(first_message: str, max_words: int = 4) -> str:
+    """
+    Generate a smart session title from the first message
+    
+    Args:
+        first_message: The first user message
+        max_words: Maximum number of words in title
+        
+    Returns:
+        A concise session title
+    """
+    # Remove common question words
+    stop_words = {"what", "how", "when", "where", "why", "who", "is", "are", "the", "a", "an", "can", "you", "please", "tell", "me"}
+    
+    # Split into words and clean
+    words = first_message.lower().split()
+    
+    # Filter out stop words and get meaningful words
+    meaningful_words = [w.strip("?.,!") for w in words if w.strip("?.,!") not in stop_words]
+    
+    # Take first max_words meaningful words
+    title_words = meaningful_words[:max_words] if meaningful_words else words[:max_words]
+    
+    # Capitalize first letter of each word
+    title = " ".join(word.capitalize() for word in title_words)
+    
+    # Truncate if too long
+    if len(title) > 30:
+        title = title[:27] + "..."
+    
+    return title or "New Chat"

@@ -42,7 +42,7 @@ class FirestoreManager:
 
     def is_connected(self) -> bool:
         """Check if Firestore is connected"""
-        return self.client is not None\
+        return self.client is not None
         
     def get_chat_history(self, session_id: str) -> FirestoreChatMessageHistory:
         """
@@ -64,26 +64,38 @@ class FirestoreManager:
         )
     
     def save_message(self, session_id: str, role: str, content: str):
-        """
-        Save a single message to Firestore
-        
-        Args:
-            session_id: Unique session identifier
-            role: 'user' or 'assistant'
-            content: Message content
-        """
+        """Save a single message to Firestore"""
         if not self.is_connected():
-            st.warning("⚠️ Firestore not connected. Message not saved.")
             return
         
         try:
             chat_history = self.get_chat_history(session_id)
+            
+            # Check if this is first message BEFORE adding
+            is_first_message = len(chat_history.messages) == 0
+            
             if role == "user":
-                chat_history.add_user_message(content)
+                chat_history.add_user_message(content)  # Save message first
+                
+                # THEN save title (after message is in Firestore)
+                if is_first_message:
+                    from utils.helpers import generate_session_title
+                    title = generate_session_title(content)
+        
+                    # Store title as a separate metadata document
+                    metadata_ref = self.client.collection(self.collection_name).document(f"{session_id}_metadata")
+                    metadata_ref.set({
+                        'session_id': session_id,
+                        'title': title,
+                        'created_at': datetime.now()
+                    })
+                    
             elif role == "assistant":
                 chat_history.add_ai_message(content)
+            
         except Exception as e:
-            st.error(f"❌ Failed to save message: {e}")
+            st.error(f"Error saving message: {e}")
+
 
     def save_messages_batch(self, session_id: str, messages: List[Dict[str, str]]):
         """
@@ -183,32 +195,35 @@ class FirestoreManager:
         
     def get_session_metadata(self, session_id: str) -> Dict:
         """
-        Get metadata about a session (message count, created date, etc.)
-        
+        Get metadata for a chat session
+
         Args:
             session_id: Unique session identifier
-            
+
         Returns:
-            Dictionary with session metadata
+            Dictionary containing session metadata
         """
         if not self.is_connected():
             return {}
         
         try:
-            chat_history = self.get_chat_history(session_id)
-            messages = chat_history.messages
+            # Read from metadata document
+            metadata_ref = self.client.collection(self.collection_name).document(f"{session_id}_metadata")
+            doc = metadata_ref.get()
             
-            return {
-                "session_id": session_id,
-                "message_count": len(messages),
-                "has_messages": len(messages) > 0,
-                "last_updated": datetime.now().isoformat()
-            }
+            if doc.exists:
+                data = doc.to_dict()
+                return {
+                    "session_id": session_id,
+                    "title": data.get('title', 'New Chat'),
+                    "message_count": 0,  # We'll calculate this differently
+                    "has_messages": True,
+                    "created_at": data.get('created_at'),
+                }
+            return {}
         except Exception as e:
-            st.error(f"❌ Failed to get session metadata: {e}")
             return {}
         
-
 # Convenience functions for Streamlit
 def init_firestore(project_id: str) -> FirestoreManager:
     """
