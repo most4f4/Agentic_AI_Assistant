@@ -15,7 +15,6 @@ from utils.helpers import generate_session_title
 
 # Load environment variables
 load_dotenv()
-os.environ["LANGCHAIN_TRACING_V2"] = "false"
 
 # Page configuration
 st.set_page_config(**PAGE_CONFIG)
