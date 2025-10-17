@@ -27,6 +27,7 @@ RAG_CONFIG = {
     "chunk_overlap": 200,
     "embedding_model": "text-embedding-3-small",
     "retriever_k": 3,
+    "similarity_score_threshold": 0.2,
     "collection_name": "uploaded_docs"
 }
 

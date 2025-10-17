@@ -65,14 +65,14 @@ def process_documents(uploaded_files):
     
     # Create retriever
     retriever = vectorstore.as_retriever(
-        search_type="similarity",
-        search_kwargs={"k": RAG_CONFIG["retriever_k"]}
+        search_type="similarity_score_threshold",
+        search_kwargs={"k": RAG_CONFIG["retriever_k"], "score_threshold": RAG_CONFIG["similarity_score_threshold"]}
     )
     
     # Create QA chain
     llm = ChatOpenAI(model="gpt-4o")
 
-     # Contextualize question prompt
+    # Contextualize question prompt
     # This helps the LLM reformulate follow-up questions using chat history
     # Example: "Tell me more about it" → "Tell me more about AI ethics"
     contextualize_q_system_prompt = (
@@ -97,13 +97,19 @@ def process_documents(uploaded_files):
     
     # Answer question prompt with chat history
     qa_system_prompt = (
-        "You are an assistant for question-answering tasks. Use "
-        "the following pieces of retrieved context to answer the "
-        "question. If you don't know the answer, just say that you "
-        "don't know. Keep the answer concise and accurate."
-        "\n\n"
-        "{context}"
-    )
+    "You are a helpful assistant answering questions about the user's uploaded documents. "
+    "Use the context below to provide accurate answers.\n\n"
+    
+    "Guidelines:\n"
+    "- Answer based on the provided context\n"
+    "- If information is in the context, provide it with confidence and detail\n"
+    "- If context is partial, answer what you can and explain what's missing\n"
+    "- If context doesn't contain the answer, say so clearly\n"
+    "- Reference conversation history to understand follow-up questions\n"
+    "- Be natural and conversational, not robotic\n\n"
+    
+    "{context}"
+)
     
     qa_prompt = ChatPromptTemplate.from_messages([
         ("system", qa_system_prompt),
