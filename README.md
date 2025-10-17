@@ -7,7 +7,7 @@ A powerful AI assistant built with LangChain and Streamlit that can reason about
 - **🧠 Reasoning Agent**: Uses GPT-4 to intelligently decide which tools to use
 - **💬 Conversational Context**: Understands follow-up questions and pronouns ("it", "that", "there")
 - **📄 Document Q&A (RAG)**: Upload PDFs, Word docs, or text files and ask questions with conversation history
-- **☁️ Cloud Storage (Optional)**: Save conversations to Firebase Firestore for persistence across sessions
+- **☁️ Cloud Storage**: Save conversations to Firebase Firestore for persistence across sessions
 - **🔍 Web Search**: Search for current information and news
 - **🌤️ Weather**: Get real-time weather for any city
 - **💱 Currency Converter**: Convert between major currencies
@@ -28,7 +28,7 @@ A powerful AI assistant built with LangChain and Streamlit that can reason about
   AI: "You worked there for 3 years"
   ```
 
-### **Cloud Storage (Optional)**
+### **Cloud Storage**
 
 - Save conversations to Firebase Firestore
 - Auto-save mode for automatic backup
@@ -127,9 +127,6 @@ Required API keys:
 - **OpenAI API**: Get from [OpenAI Platform](https://platform.openai.com/api-keys)
 - **SerpAPI**: Get from [SerpAPI](https://serpapi.com/)
 - **OpenWeather**: Get from [OpenWeatherMap](https://openweathermap.org/api)
-
-Optional (for cloud storage):
-
 - **Firebase Firestore**: See [FIREBASE_SETUP.md](FIREBASE_SETUP.md) for setup instructions
 
 ### 5. Run the Application
@@ -190,7 +187,7 @@ The agent can use multiple tools intelligently:
 "What's the weather in Paris and how much is 50 EUR in USD?"
 ```
 
-## ☁️ Cloud Storage (Optional)
+## ☁️ Cloud Storage
 
 ### Enable Cloud Storage
 
@@ -313,12 +310,12 @@ python test_firestore.py
 
 ## 📝 API Keys Required
 
-| Service        | Purpose            | Get Key From                                             | Required    |
-| -------------- | ------------------ | -------------------------------------------------------- | ----------- |
-| OpenAI         | GPT-4 & Embeddings | [OpenAI Platform](https://platform.openai.com/)          | ✅ Yes      |
-| SerpAPI        | Web Search         | [SerpAPI](https://serpapi.com/)                          | ✅ Yes      |
-| OpenWeatherMap | Weather Data       | [OpenWeatherMap](https://openweathermap.org/api)         | ✅ Yes      |
-| Firebase       | Cloud Storage      | [Firebase Console](https://console.firebase.google.com/) | ⭕ Optional |
+| Service        | Purpose            | Get Key From                                             | Required |
+| -------------- | ------------------ | -------------------------------------------------------- | -------- |
+| OpenAI         | GPT-4 & Embeddings | [OpenAI Platform](https://platform.openai.com/)          | ✅ Yes   |
+| SerpAPI        | Web Search         | [SerpAPI](https://serpapi.com/)                          | ✅ Yes   |
+| OpenWeatherMap | Weather Data       | [OpenWeatherMap](https://openweathermap.org/api)         | ✅ Yes   |
+| Firebase       | Cloud Storage      | [Firebase Console](https://console.firebase.google.com/) | ✅ Yes   |
 
 ## 🎓 Key Concepts
 
@@ -416,7 +413,7 @@ Potential future enhancements:
 
 - **6 Built-in Tools** (Web search, Weather, Currency, Stocks, Calculator, Documents)
 - **Conversational Context** (Understands pronouns and references)
-- **Cloud Storage** (Optional Firebase integration)
+- **Cloud Storage** (Firebase integration)
 - **Production Ready** (Modular architecture, error handling)
 
 ---
