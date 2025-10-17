@@ -34,6 +34,7 @@ class FirestoreManager:
                 st.warning("⚠️ Firebase credentials not configured. Messages will not be saved to cloud.")
                 return
             
+            # Initialize Firestore client and connect to project
             self.client = firestore.Client(project=self.project_id)
             st.success("✅ Connected to Firebase Firestore")
         except Exception as e:
@@ -71,7 +72,7 @@ class FirestoreManager:
         try:
             chat_history = self.get_chat_history(session_id)
             
-            # Check if this is first message BEFORE adding
+            # Check if this is first message BEFORE adding to generate title for session metadata
             is_first_message = len(chat_history.messages) == 0
             
             if role == "user":
@@ -95,7 +96,6 @@ class FirestoreManager:
             
         except Exception as e:
             st.error(f"Error saving message: {e}")
-
 
     def save_messages_batch(self, session_id: str, messages: List[Dict[str, str]]):
         """
@@ -148,7 +148,6 @@ class FirestoreManager:
             st.error(f"❌ Failed to load messages: {e}")
             return []
         
-    
     def clear_session(self, session_id: str):
         """
         Clear all messages for a session
@@ -168,7 +167,6 @@ class FirestoreManager:
         except Exception as e:
             st.error(f"❌ Failed to clear session: {e}")
 
-
     def list_sessions(self, user_id: Optional[str] = None) -> List[str]:
         """
         List all session IDs (optionally filtered by user)
@@ -185,7 +183,7 @@ class FirestoreManager:
         
         try:
             # Query Firestore for all documents in the collection
-            sessions = self.client.collection(self.collection_name).stream()
+            sessions = self.client.collection(self.collection_name).stream() # stream() returns all documents in the collection
             session_ids = [session.id for session in sessions]
             
             return session_ids
@@ -209,10 +207,11 @@ class FirestoreManager:
         try:
             # Read from metadata document
             metadata_ref = self.client.collection(self.collection_name).document(f"{session_id}_metadata")
-            doc = metadata_ref.get()
+            doc = metadata_ref.get() # Get the document
             
+            # Return metadata if exists
             if doc.exists:
-                data = doc.to_dict()
+                data = doc.to_dict() 
                 return {
                     "session_id": session_id,
                     "title": data.get('title', 'New Chat'),

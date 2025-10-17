@@ -35,7 +35,7 @@ def setup_agent():
     ]
     
     # Pull the prompt template from LangChain hub
-    base_prompt = hub.pull("hwchase17/openai-tools-agent")
+    # base_prompt = hub.pull("hwchase17/openai-tools-agent")
 
     # Enhance the system message to be more aware of uploaded documents
     enhanced_system_message = """You are a helpful AI assistant with access to various tools.
