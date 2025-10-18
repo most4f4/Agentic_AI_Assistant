@@ -13,6 +13,11 @@ pypdf>=3.17.0
 unstructured>=0.10.0
 python-magic-bin>=0.4.14
 
+# Document processing
+pypdf>=3.17.0
+python-docx>=1.1.0
+unstructured>=0.11.0
+
 # Vector store and embeddings
 chromadb>=0.4.18
 openai>=1.0.0
@@ -26,6 +31,5 @@ tavily-python>=0.3.0
 google-cloud-firestore>=2.11.0
 langchain-google-firestore>=0.1.0
 
-# Optional but recommended
-pandas>=2.0.0
-numpy>=1.24.0
+# Voice I/O (OpenAI Whisper & TTS)
+audio-recorder-streamlit>=0.0.8
