@@ -27,8 +27,18 @@ RAG_CONFIG = {
     "chunk_overlap": 200,
     "embedding_model": "text-embedding-3-small",
     "retriever_k": 3,
-    "similarity_score_threshold": 0.2,
+    "similarity_score_threshold": 0.1,
     "collection_name": "uploaded_docs"
+}
+
+# Voice Configuration
+# Voice Configuration (OpenAI Whisper & TTS)
+VOICE_CONFIG = {
+    "enabled": True,  # Enable/disable voice features
+    "default_voice": "alloy",  # Default voice: alloy, echo, fable, onyx, nova, shimmer
+    "tts_model": "tts-1",  # Options: "tts-1" (faster) or "tts-1-hd" (higher quality)
+    "auto_speak": True,  # Automatically speak AI responses
+    "whisper_language": "en",  # Language hint for Whisper (improves accuracy)
 }
 
 # Firestore Configuration (optional - for cloud storage)
@@ -37,6 +47,7 @@ FIRESTORE_CONFIG = {
     "project_id": "ai-assistant-25549",  # Replace with your Firebase project ID
     "collection_name": "chat_sessions",
     "auto_save": True,  # Automatically save after each message
+    "auto_load": False,  # Automatically load last session on startup  
 }
 
 # Supported file types
@@ -58,12 +69,14 @@ TOOL_DESCRIPTIONS = """
 The AI agent has access to these tools and will automatically choose which ones to use:
 
 **Available Tools:**
+- 📄 **Document Q&A** - Answer questions from uploaded files
+- 🎤 **Voice I/O** - Speak to the AI and listen to responses
 - 🔍 **Web Search** - Search for current information
 - 🌤️ **Weather** - Get weather for any city
 - 💱 **Currency Converter** - Convert between currencies
 - 📊 **Stock Prices** - Look up stock information
 - 🧮 **Calculator** - Perform calculations
-- 📄 **Document Q&A** - Answer questions from uploaded files
+
 
 The agent will reason about your question and decide which tools to use!
 """
