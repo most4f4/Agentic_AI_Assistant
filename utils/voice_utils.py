@@ -14,13 +14,12 @@ def get_openai_client():
         raise ValueError("OPENAI_API_KEY environment variable not set.")
     return OpenAI(api_key=api_key)
 
-
 def speech_to_text_whisper(audio_bytes: bytes) -> str:
     """
     Convert speech to text using OpenAI Whisper API
     
     Args:
-        audio_bytes: Audio data in bytes
+        audio_bytes: Audio data in bytes (WAV format from recorder)
         
     Returns:
         Transcribed text or error message
@@ -32,7 +31,9 @@ def speech_to_text_whisper(audio_bytes: bytes) -> str:
             temp_audio_file.write(audio_bytes)
             temp_audio_file_path = temp_audio_file.name
 
-        # Transcribe using Whisper
+        # Transcribe using Whisper 
+        #  - Send the audio file to OpenAI Whisper API with language hint "en"
+        #  - Receive back the transcription text
         with open(temp_audio_file_path, "rb") as audio_file: # "rb" for read binary
             transcription = client.audio.transcriptions.create(
                 file=audio_file,
@@ -49,10 +50,9 @@ def speech_to_text_whisper(audio_bytes: bytes) -> str:
     except Exception as e:
         return f"❌ Whisper transcription error: {str(e)}"
     
-
 def text_to_speech_openai(text: str, voice: str = "alloy") -> bytes:
     """
-    Convert text to speech using OpenAI TTS API
+    Convert text to natural speech audio using OpenAI TTS API
     
     Args:
         text: Text to convert to speech
@@ -64,6 +64,7 @@ def text_to_speech_openai(text: str, voice: str = "alloy") -> bytes:
     try:
         client = get_openai_client()
 
+        # Sends text to OpenAI TTS API and gets back audio bytes
         tts_response = client.audio.speech.create(
             model="tts-1", # Use "tts-1-hd" for higher quality (costs more)
             voice=voice,
@@ -84,9 +85,12 @@ def autoplay_audio(audio_bytes: bytes, format: str = "mp3"):
     Args:
         audio_bytes: Audio data in bytes
         format: Audio format (mp3, wav, etc.)
+
+    Returns:
+        None (plays audio in Streamlit)
     """
     import base64
-    # Convert to base64
+    # Encodes audio to base64
     audio_base64 = base64.b64encode(audio_bytes).decode()
 
     # Create HTML audio element with autoplay
@@ -95,7 +99,9 @@ def autoplay_audio(audio_bytes: bytes, format: str = "mp3"):
         <source src="data:audio/{format};base64,{audio_base64}" type="audio/{format}">
     </audio>
     """
-    st.markdown(audio_html, unsafe_allow_html=True)
+    
+    # Inject HTML into Streamlit app
+    st.markdown(audio_html, unsafe_allow_html=True) # unsafe_allow_html=True to allow HTML injection
 
 def get_available_voices():
     """
