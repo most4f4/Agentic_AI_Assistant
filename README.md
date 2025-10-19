@@ -44,9 +44,11 @@ ai_assistant/
 ├── app.py                      # Main entry point
 ├── requirements.txt            # Dependencies
 ├── .env                        # API keys (create from .env.example)
-├── .env.example               # Example environment variables
+├── .env.example                # Example environment variables
 ├── README.md                   # This file
-├── FIREBASE_SETUP.md          # Cloud storage setup guide
+├── docs/
+│   ├── firebase_setup.md       # Cloud storage setup guide
+│   └── voice_module.md         # Voice module documentation
 │
 ├── config/
 │   ├── __init__.py
